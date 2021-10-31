@@ -1,46 +1,118 @@
-<html>
+  <html>
   <head>
-    <!--Load the AJAX API-->
+    <meta charset="UTF-8">
+    <style>
+      .material-icons.gold { color: gold; }
+      .material-icons.blue { color: blue; }
+      .temp {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-family: Arial;
+          padding: 5px;
+      }
+    </style>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+
     <script type="text/javascript">
-
-      // Load the Visualization API and the piechart package.
       google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart2);
 
-      // Set a callback to run when the Google Visualization API is loaded.
-      google.charts.setOnLoadCallback(drawChart);
+      const sun = '<span class="material-icons gold">sunny</span>';
+      const cloud = '<span class="material-icons blue">cloud</span>';
+      
+      var data = [
+                    ['01-11-2021',  11, sun],
+                    ['02-11-2021',  12, cloud],
+                    ['03-11-2021',  14, sun],
+                    ['04-11-2021',  13, sun],
+                    ['05-11-2021',   3, sun],
+                    ['06-11-2021',   1, sun],
+                    ['07-11-2021',   1, sun],
+                    ['08-11-2021',  11, sun],
+                    ['09-11-2021',  11, sun],
+                    ['10-11-2021',  11, sun],
+                    ['11-11-2021',  11, cloud],
+                    ['12-11-2021',  11, sun],
+                    ['13-11-2021',  11, sun],
+                    ['14-11-2021',  11, sun],
+                    ['15-11-2021',  11, sun],
+                    ['16-11-2021',  11, sun],
+                    ['17-11-2021',  11, sun],
+                    ['18-11-2021',  11, cloud],
+                    ['19-11-2021',  11, cloud]
+       ];
+       
+       function drawChart() {
+         var dataTable = new google.visualization.DataTable();
+         dataTable.addColumn('string', 'Dzień');
+         dataTable.addColumn('number', 'Temperatura');
 
-      // Callback that creates and populates a data table,
-      // instantiates the pie chart, passes in the data and
-      // draws it.
-      function drawChart() {
+         dataTable.addRows(data.map(r => [r[0],r[1]]))
 
-      // Create the data table.
-      var data = new google.visualization.DataTable();
-      data.addColumn('string', 'Topping');
-      data.addColumn('number', 'Slices');
-      data.addRows([
-        ['Mushrooms', 3],
-        ['Onions', 1],
-        ['Olives', 1],
-        ['Zucchini', 1],
-        ['Pepperoni', 2]
-      ]);
+         var options = {
+           title: 'Temperatura w miesiącu Listopad',
+           curveType: 'function',
+           legend: { position: 'bottom' }
+         };
 
-      // Set chart options
-      var options = {'title':'How Much Pizza I Ate Last Night',
-                     'width':400,
-                     'height':300};
+         var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
 
-      // Instantiate and draw our chart, passing in some options.
-      var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
-      chart.draw(data, options);
+         chart.draw(dataTable, options);
+       }
+      
+      function drawChart1() {
+        var dataTable = new google.visualization.DataTable();
+        dataTable.addColumn('string', 'Dzień');
+        dataTable.addColumn('number', 'Temperatura');
+        dataTable.addColumn({type: 'string', role: 'tooltip'});
+
+        dataTable.addRows(data.map(r => [r[0],r[1], r[1] + '\u2103']))
+
+        var options = {
+          title: 'Temperatura w miesiącu Listopad',
+          curveType: 'function',
+          legend: { position: 'bottom' }
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+        chart.draw(dataTable, options);
+      }
+    
+    function drawChart2() {
+      var dataTable = new google.visualization.DataTable();
+      dataTable.addColumn('string', 'Dzień');
+      dataTable.addColumn('number', 'Temperatura');
+      dataTable.addColumn({type: 'string', role: 'tooltip', 'p': {'html': true}});
+
+      dataTable.addRows(data.map(r => [r[0],r[1], createCustomHTMLContent(r)]))
+
+      var options = {
+        title: 'Temperatura w miesiącu Listopad',
+        curveType: 'function',
+        legend: { position: 'bottom' },
+        tooltip: {isHtml: true}
+      };
+
+      var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+      chart.draw(dataTable, options);
+    }
+    function createCustomHTMLContent(record) {
+        return '<div style="padding:5px 5px 5px 5px; display: flex; align-items: center">' +
+                     record[2] +
+                     '<div class="temp">' +
+                        record [1] + '\u2103' +
+                    '<div>' +
+                '<div>'
     }
     </script>
   </head>
-
   <body>
-<!--Div that will hold the pie chart-->
-    <div id="chart_div" style="width:400; height:300"></div>
+    <div id="curve_chart" style="width: 900px; height: 500px"></div>
   </body>
 </html>
