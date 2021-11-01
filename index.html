@@ -1,118 +1,210 @@
   <html>
   <head>
     <meta charset="UTF-8">
-    <style>
-      .material-icons.gold { color: gold; }
-      .material-icons.blue { color: blue; }
-      .temp {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          font-family: Arial;
-          padding: 5px;
-      }
-    </style>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment-with-locales.min.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
-    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
-
+    <script src="https://kit.fontawesome.com/3e099c58e8.js" crossorigin="anonymous"></script>
+    
+    <style>
+        .page {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            text-align: center;
+            font-size: 30pt;
+            padding: 5pt;
+        }
+        .main {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+        }
+        .tooltip {
+            padding: 5pt;
+            align-items: center;
+        }
+        .head {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-size: 10pt;
+        }
+        .temp {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 15pt;
+            padding: 10pt;
+        }
+        .columnTitle {
+            font-size: 14pt;
+            color: white;
+            background-color: orange
+        }
+    </style>
     <script type="text/javascript">
-      google.charts.load('current', {'packages':['corechart']});
-      google.charts.setOnLoadCallback(drawChart2);
+      google.charts.load('current', {'packages':['corechart', 'table']});
+      google.charts.setOnLoadCallback(() => {drawTable();});
 
-      const sun = '<span class="material-icons gold">sunny</span>';
-      const cloud = '<span class="material-icons blue">cloud</span>';
+      const sun = '<i class="fas fa-sun fa-2x" style="color:gold"></i>';
+      const cloud = '<i class="fas fa-cloud fa-2x" style="color:gray"></i>';
+      const rain = '<i class="fas fa-cloud-showers-heavy fa-2x" style="color:gray"></i>';
+      const cloudSunRain = '<i class="fas fa-cloud-sun-rain fa-2x" style="color:gray"></i>';
+      const snow = '<i class="fas fa-snowflake fa-2x" style="color:blue"></i>';
       
       var data = [
-                    ['01-11-2021',  11, sun],
-                    ['02-11-2021',  12, cloud],
-                    ['03-11-2021',  14, sun],
-                    ['04-11-2021',  13, sun],
-                    ['05-11-2021',   3, sun],
+                    ['01-11-2021',  1.2, sun],
+                    ['02-11-2021',  12, snow],
+                    ['03-11-2021',  14, cloud],
+                    ['04-11-2021',  13, cloudSunRain],
+                    ['05-11-2021',   3, rain],
                     ['06-11-2021',   1, sun],
-                    ['07-11-2021',   1, sun],
+                    ['07-11-2021',  31, sun],
                     ['08-11-2021',  11, sun],
                     ['09-11-2021',  11, sun],
                     ['10-11-2021',  11, sun],
                     ['11-11-2021',  11, cloud],
                     ['12-11-2021',  11, sun],
                     ['13-11-2021',  11, sun],
-                    ['14-11-2021',  11, sun],
-                    ['15-11-2021',  11, sun],
+                    ['14-11-2021',  11, cloudSunRain],
+                    ['15-11-2021',  21, sun],
                     ['16-11-2021',  11, sun],
                     ['17-11-2021',  11, sun],
                     ['18-11-2021',  11, cloud],
-                    ['19-11-2021',  11, cloud]
-       ];
+                    ['19-11-2021',  11, cloud],
+                    ['20-11-2021',  11, sun],
+                    ['21-11-2021',  11, cloud],
+                    ['22-11-2021',  12, cloud],
+                    ['23-11-2021',  13, sun],
+                    ['24-11-2021',  14, cloud],
+                    ['25-11-2021',  15, cloud],
+                    ['26-11-2021',  12, sun],
+                    ['27-11-2021',  01, cloud],
+                    ['28-11-2021',  11, cloud],
+                    ['29-11-2021',  11, sun],
+                    ['30-11-2021',  11, cloud]
+                ];
        
-       function drawChart() {
-         var dataTable = new google.visualization.DataTable();
-         dataTable.addColumn('string', 'Dzień');
-         dataTable.addColumn('number', 'Temperatura');
+        function drawTable() {
+            var dataTable = new google.visualization.DataTable();
+            dataTable.addColumn('string', 'Data');
+            dataTable.addColumn('string', 'Dzień');
+            dataTable.addColumn('string', 'Temperatura');
+            dataTable.addColumn('string', 'Pogoda');
 
-         dataTable.addRows(data.map(r => [r[0],r[1]]))
+            let mapData = data.map(r => [
+                                            r[0],
+                                            moment(r[0], "DD-MM-YYYY").locale('pl').format('dddd'),
+                                            toCelcius(r[1]),
+                                            r[2]
+                                         ]);
 
-         var options = {
-           title: 'Temperatura w miesiącu Listopad',
-           curveType: 'function',
-           legend: { position: 'bottom' }
-         };
+            dataTable.addRows(mapData);
+            
+            var options = {
+                allowHtml: true,
+                showRowNumber: false,
+                width: '100%',
+                height: '100%',
+                cssClassNames: {headerRow:'columnTitle'}
+            }
 
-         var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
-
-         chart.draw(dataTable, options);
-       }
-      
-      function drawChart1() {
-        var dataTable = new google.visualization.DataTable();
-        dataTable.addColumn('string', 'Dzień');
-        dataTable.addColumn('number', 'Temperatura');
-        dataTable.addColumn({type: 'string', role: 'tooltip'});
-
-        dataTable.addRows(data.map(r => [r[0],r[1], r[1] + '\u2103']))
-
-        var options = {
-          title: 'Temperatura w miesiącu Listopad',
-          curveType: 'function',
-          legend: { position: 'bottom' }
-        };
-
-        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
-
-        chart.draw(dataTable, options);
-      }
+            var table = new google.visualization.Table(document.getElementById('table_div'));
+            table.draw(dataTable, options);
+        }
     
-    function drawChart2() {
-      var dataTable = new google.visualization.DataTable();
-      dataTable.addColumn('string', 'Dzień');
-      dataTable.addColumn('number', 'Temperatura');
-      dataTable.addColumn({type: 'string', role: 'tooltip', 'p': {'html': true}});
+        function toCelcius(temperature) {
+             return temperature + '\u2103';
+        }
+    
+        function drawChart() {
+            var dataTable = new google.visualization.DataTable();
+            dataTable.addColumn('string', 'Dzień');
+            dataTable.addColumn('number', 'Temperatura');
 
-      dataTable.addRows(data.map(r => [r[0],r[1], createCustomHTMLContent(r)]))
+            dataTable.addRows(data.map(r => [r[0], r[1]]))
 
-      var options = {
-        title: 'Temperatura w miesiącu Listopad',
-        curveType: 'function',
-        legend: { position: 'bottom' },
-        tooltip: {isHtml: true}
-      };
+            var options = {
+                title: 'Temperatura w miesiącu Listopad',
+                curveType: 'function',
+                legend: { position: 'bottom' }
+            };
 
-      var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+            var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
 
-      chart.draw(dataTable, options);
-    }
-    function createCustomHTMLContent(record) {
-        return '<div style="padding:5px 5px 5px 5px; display: flex; align-items: center">' +
-                     record[2] +
-                     '<div class="temp">' +
-                        record [1] + '\u2103' +
-                    '<div>' +
-                '<div>'
-    }
+            chart.draw(dataTable, options);
+        }
+        
+        function drawChart1() {
+            var dataTable = new google.visualization.DataTable();
+            dataTable.addColumn('string', 'Dzień');
+            dataTable.addColumn('number', 'Temperatura');
+            dataTable.addColumn({type: 'string', role: 'tooltip'});
+
+            dataTable.addRows(data.map(r => [r[0], r[1], r[1] + '\u2103']))
+
+            var options = {
+                title: 'Temperatura w miesiącu Listopad',
+                curveType: 'function',
+                legend: { position: 'bottom' }
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+            chart.draw(dataTable, options);
+          }
+        
+        function drawChart2() {
+            var dataTable = new google.visualization.DataTable();
+            dataTable.addColumn('string', 'Dzień');
+            dataTable.addColumn('number', 'Temperatura');
+            dataTable.addColumn({type: 'string', role: 'tooltip', 'p': {'html': true}});
+
+            dataTable.addRows(data.map(r => [r[0], r[1], createCustomHTMLContent(r)]))
+
+            var options = {
+                title: 'Temperatura w miesiącu Listopad',
+                curveType: 'function',
+                legend: { position: 'bottom' },
+                tooltip: { isHtml: true }
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+            chart.draw(dataTable, options);
+        }
+        
+        function createCustomHTMLContent(record) {
+            moment.locale('pl');
+            let dt = moment(record[0], "DD-MM-YYYY");
+            
+            return '<div class="tooltip">' +
+                     '<div class="head">' +
+                       record[0] + '<br/>' + dt.format('dddd') +
+                     '</div>' +
+                     '<div style="display: flex; align-items: center">' +
+                       record[2] +
+                       '<div class="temp">' +
+                         toCelcius(record [1]) +
+                       '</div>' +
+                     '<div>' +
+                   '<div>'
+        }
     </script>
   </head>
   <body>
-    <div id="curve_chart" style="width: 900px; height: 500px"></div>
+    <div class="page">Historia pogody Listopad 2021</div>
+    
+    <div class="main">
+        <!--div id="curve_chart" style="width: 45%; height: 400pt"></div>-->
+        <div style="width: 100%;">
+            <i class="fas fa-sun fa-2x" style="color:gold"></i> Słońce
+            <i class="fas fa-cloud fa-2x" style="color:gray"></i> Chmury
+            <i class="fas fa-cloud-showers-heavy fa-2x" style="color:gray"></i>Deszcz
+            <i class="fas fa-cloud-sun-rain fa-2x" style="color:gray"></i>Słonce i deszcz
+            <i class="fas fa-snowflake fa-2x" style="color:blue"></i> Śnieg
+            <i class="fad fa-snowflake"></i>
+            <div id="table_div" style="width: 100%;"></div>
+        </div>
+    <div>
   </body>
 </html>
