@@ -12,6 +12,30 @@
             font-size: 30pt;
             padding: 5pt;
         }
+        #table {
+            text-align: center;
+            padding: 10pt;
+            
+        }
+        #table_div {
+            border: 1px solid lightgray;
+        }
+    
+        .google-visualization-table-td {
+            text-align: center;
+        }
+    
+        #legend {
+            width: 100%;
+            font-size: 8pt;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #legend > i {
+            padding: 0pt 15pt 15pt 0pt;
+            width:20%
+        }
         .main {
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
             display: flex;
@@ -38,12 +62,24 @@
         .columnTitle {
             font-size: 14pt;
             color: white;
-            background-color: orange
+            background-color: gray
+        }
+        .tableRow {
+            border: 1px solid red;
+            
+        }
+        @media print {
+            .columnTitle {
+                font-size: 14pt;
+            }
+            .tableRow {
+                border: 1px solid red;
+            }
         }
     </style>
     <script type="text/javascript">
       google.charts.load('current', {'packages':['corechart', 'table']});
-      google.charts.setOnLoadCallback(() => {drawTable();});
+      google.charts.setOnLoadCallback(() => { drawTable();});
 
       const sun = '<i class="fas fa-sun fa-2x" style="color:gold"></i>';
       const cloud = '<i class="fas fa-cloud fa-2x" style="color:gray"></i>';
@@ -52,50 +88,52 @@
       const snow = '<i class="fas fa-snowflake fa-2x" style="color:blue"></i>';
       
       var data = [
-                    ['01-11-2021',  1.2, sun],
-                    ['02-11-2021',  12, snow],
-                    ['03-11-2021',  14, cloud],
-                    ['04-11-2021',  13, cloudSunRain],
-                    ['05-11-2021',   3, rain],
-                    ['06-11-2021',   1, sun],
-                    ['07-11-2021',  31, sun],
-                    ['08-11-2021',  11, sun],
-                    ['09-11-2021',  11, sun],
-                    ['10-11-2021',  11, sun],
-                    ['11-11-2021',  11, cloud],
-                    ['12-11-2021',  11, sun],
-                    ['13-11-2021',  11, sun],
-                    ['14-11-2021',  11, cloudSunRain],
-                    ['15-11-2021',  21, sun],
-                    ['16-11-2021',  11, sun],
-                    ['17-11-2021',  11, sun],
-                    ['18-11-2021',  11, cloud],
-                    ['19-11-2021',  11, cloud],
-                    ['20-11-2021',  11, sun],
-                    ['21-11-2021',  11, cloud],
-                    ['22-11-2021',  12, cloud],
-                    ['23-11-2021',  13, sun],
-                    ['24-11-2021',  14, cloud],
-                    ['25-11-2021',  15, cloud],
-                    ['26-11-2021',  12, sun],
-                    ['27-11-2021',  01, cloud],
-                    ['28-11-2021',  11, cloud],
-                    ['29-11-2021',  11, sun],
-                    ['30-11-2021',  11, cloud]
+                    ['01-11-2021',  00, 14, sun],
+                    ['02-11-2021',  12, 14, snow],
+                    ['03-11-2021',  14, 14, cloud],
+                    ['04-11-2021',  13, 19, cloudSunRain],
+                    ['05-11-2021',   3,  5, rain],
+                    ['06-11-2021',   1,  5, sun],
+                    ['07-11-2021',  31,  5, sun],
+                    ['08-11-2021',  11, 15, sun],
+                    ['09-11-2021',  11, 15, sun],
+                    ['10-11-2021',  11, 15, sun],
+                    ['11-11-2021',  11, 15, cloud],
+                    ['12-11-2021',  11, 15, sun],
+                    ['13-11-2021',  11, 15, sun],
+                    ['14-11-2021',  11, 15, cloudSunRain],
+                    ['15-11-2021',  21, 15, sun],
+                    ['16-11-2021',  11, 15, sun],
+                    ['17-11-2021',  11, 15, sun],
+                    ['18-11-2021',  11, 15, cloud],
+                    ['19-11-2021',  11, 15, cloud],
+                    ['20-11-2021',  11, 15, sun],
+                    ['21-11-2021',  11, 15, cloud],
+                    ['22-11-2021',  12, 15, cloud],
+                    ['23-11-2021',  13, 15, sun],
+                    ['24-11-2021',  14, 15, cloud],
+                    ['25-11-2021',  15, 15, cloud],
+                    ['26-11-2021',  12, 15, sun],
+                    ['27-11-2021',  01, 15, cloud],
+                    ['28-11-2021',  11, 15, cloud],
+                    ['29-11-2021',  11, 15, sun],
+                    ['30-11-2021',  11, 15, cloud]
                 ];
        
         function drawTable() {
             var dataTable = new google.visualization.DataTable();
             dataTable.addColumn('string', 'Data');
             dataTable.addColumn('string', 'Dzień');
-            dataTable.addColumn('string', 'Temperatura');
+            dataTable.addColumn('string', 'Temperatura minimalna');
+            dataTable.addColumn('string', 'Temperatura maksymalna');
             dataTable.addColumn('string', 'Pogoda');
 
             let mapData = data.map(r => [
                                             r[0],
                                             moment(r[0], "DD-MM-YYYY").locale('pl').format('dddd'),
                                             toCelcius(r[1]),
-                                            r[2]
+                                            toCelcius(r[2]),
+                                            r[3]
                                          ]);
 
             dataTable.addRows(mapData);
@@ -105,7 +143,7 @@
                 showRowNumber: false,
                 width: '100%',
                 height: '100%',
-                cssClassNames: {headerRow:'columnTitle'}
+                cssClassNames: {headerRow: 'columnTitle'}
             }
 
             var table = new google.visualization.Table(document.getElementById('table_div'));
@@ -115,45 +153,8 @@
         function toCelcius(temperature) {
              return temperature + '\u2103';
         }
-    
+        
         function drawChart() {
-            var dataTable = new google.visualization.DataTable();
-            dataTable.addColumn('string', 'Dzień');
-            dataTable.addColumn('number', 'Temperatura');
-
-            dataTable.addRows(data.map(r => [r[0], r[1]]))
-
-            var options = {
-                title: 'Temperatura w miesiącu Listopad',
-                curveType: 'function',
-                legend: { position: 'bottom' }
-            };
-
-            var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
-
-            chart.draw(dataTable, options);
-        }
-        
-        function drawChart1() {
-            var dataTable = new google.visualization.DataTable();
-            dataTable.addColumn('string', 'Dzień');
-            dataTable.addColumn('number', 'Temperatura');
-            dataTable.addColumn({type: 'string', role: 'tooltip'});
-
-            dataTable.addRows(data.map(r => [r[0], r[1], r[1] + '\u2103']))
-
-            var options = {
-                title: 'Temperatura w miesiącu Listopad',
-                curveType: 'function',
-                legend: { position: 'bottom' }
-            };
-
-            var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
-
-            chart.draw(dataTable, options);
-          }
-        
-        function drawChart2() {
             var dataTable = new google.visualization.DataTable();
             dataTable.addColumn('string', 'Dzień');
             dataTable.addColumn('number', 'Temperatura');
@@ -182,7 +183,7 @@
                        record[0] + '<br/>' + dt.format('dddd') +
                      '</div>' +
                      '<div style="display: flex; align-items: center">' +
-                       record[2] +
+                       record[3] +
                        '<div class="temp">' +
                          toCelcius(record [1]) +
                        '</div>' +
@@ -195,14 +196,15 @@
     <div class="page">Historia pogody Listopad 2021</div>
     
     <div class="main">
-        <!--div id="curve_chart" style="width: 45%; height: 400pt"></div>-->
-        <div style="width: 100%;">
-            <i class="fas fa-sun fa-2x" style="color:gold"></i> Słońce
-            <i class="fas fa-cloud fa-2x" style="color:gray"></i> Chmury
-            <i class="fas fa-cloud-showers-heavy fa-2x" style="color:gray"></i>Deszcz
-            <i class="fas fa-cloud-sun-rain fa-2x" style="color:gray"></i>Słonce i deszcz
-            <i class="fas fa-snowflake fa-2x" style="color:blue"></i> Śnieg
-            <i class="fad fa-snowflake"></i>
+        <!--div id="curve_chart" style="width: 45%; height: 400pt"></div-->
+        <div id="table">
+            <div id="legend">
+                <i class="fas fa-sun fa-2x" style="color:gold"><br/>Słońce</i>
+                <i class="fas fa-cloud fa-2x" style="color:gray"><br/>Chmury</i>
+                <i class="fas fa-cloud-showers-heavy fa-2x" style="color:gray"><br/>Deszcz</i>
+                <i class="fas fa-cloud-sun-rain fa-2x" style="color:gray"><br/>Słońce/Deszcz</i>
+                <i class="fas fa-snowflake fa-2x" style="color:blue"><br/>Śnieg</i>
+            </div>
             <div id="table_div" style="width: 100%;"></div>
         </div>
     <div>
